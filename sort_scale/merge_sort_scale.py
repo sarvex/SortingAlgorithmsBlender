@@ -13,18 +13,18 @@ def merge(arr, l, m, r, arrayCounter, comparisonCounter):
 
     n1 = m - l + 1
     n2 = r - m
- 
+
     #create temp arrays
     L = [0] * (n1)
     R = [0] * (n2)
-    
+
     #add 2 to array counter
     arrayCounter.inputs[0].default_value += 2
     arrayCounter.inputs[0].keyframe_insert(data_path='default_value', frame=iframe)
-    
+
     #copy data to temp arrays L[] and R[]
     for i in range(0, n1):
-        
+
         #add 2 to array counter
         arrayCounter.inputs[0].default_value += 2
         arrayCounter.inputs[0].keyframe_insert(data_path='default_value', frame=iframe)
@@ -40,39 +40,35 @@ def merge(arr, l, m, r, arrayCounter, comparisonCounter):
     i = 0     #initial index of first subarray
     j = 0     #initial index of second subarray
     k = l     #initial index of merged subarray
-    
+
     while i < n1 and j < n2:
         #add 2 to array counter
         arrayCounter.inputs[0].default_value += 2
         arrayCounter.inputs[0].keyframe_insert(data_path='default_value', frame=iframe)
-        
+
         #add 1 to comparison counter
         comparisonCounter.inputs[0].default_value += 1
         comparisonCounter.inputs[0].keyframe_insert(data_path='default_value', frame=iframe)
         if L[i].scale.z <= R[j].scale.z:
             arr[k] = L[i]
-            
+
             L[i].location.x = k 
-            
-            #add 2 to array counter
-            arrayCounter.inputs[0].default_value += 2
-            arrayCounter.inputs[0].keyframe_insert(data_path='default_value', frame=iframe)
-            
+
             i += 1
         else:
             arr[k] = R[j]
-            
+
             R[j].location.x = k 
-            
-            #add 3 to array counter
-            arrayCounter.inputs[0].default_value += 2
-            arrayCounter.inputs[0].keyframe_insert(data_path='default_value', frame=iframe)
-            
+
             j += 1
+        #add 2 to array counter
+        arrayCounter.inputs[0].default_value += 2
+        arrayCounter.inputs[0].keyframe_insert(data_path='default_value', frame=iframe)
+
         k += 1
 
         for cube in cubes:
-            cube.keyframe_insert(data_path="location", frame=iframe) 
+            cube.keyframe_insert(data_path="location", frame=iframe)
         for cube in L:
             cube.keyframe_insert(data_path="location", frame=iframe)
         for cube in R:
@@ -83,13 +79,13 @@ def merge(arr, l, m, r, arrayCounter, comparisonCounter):
     #copy the remaining elements of L[], if there are any
     while i < n1:
         arr[k] = L[i]
-        
+
         L[i].location.x = k 
-        
+
         #add 2 to array counter
         arrayCounter.inputs[0].default_value += 2
         arrayCounter.inputs[0].keyframe_insert(data_path='default_value', frame=iframe)
-        
+
         x=0
         for cube in cubes:
             cube.keyframe_insert(data_path="location", frame=iframe) 
@@ -98,20 +94,20 @@ def merge(arr, l, m, r, arrayCounter, comparisonCounter):
         for cube in R:
             cube.keyframe_insert(data_path="location", frame=iframe)
         iframe += 1
-   
+
         i += 1
         k += 1
- 
+
     #copy the remaining elements of R[], if there are any
     while j < n2:
         arr[k] = R[j]
-        
+
         R[j].location.x = k 
-        
+
         #add 2 to array counter
         arrayCounter.inputs[0].default_value += 2
         arrayCounter.inputs[0].keyframe_insert(data_path='default_value', frame=iframe)
-        
+
         for cube in cubes:
             cube.keyframe_insert(data_path="location", frame=iframe) 
         for cube in L:
@@ -119,7 +115,7 @@ def merge(arr, l, m, r, arrayCounter, comparisonCounter):
         for cube in R:
             cube.keyframe_insert(data_path="location", frame=iframe)
         iframe+=1
- 
+
         j += 1
         k += 1
 

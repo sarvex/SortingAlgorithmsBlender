@@ -8,34 +8,30 @@ from mathutils import Vector, Matrix
 
 def selection_sort(cubes, arrayCounter, comparisonCounter):
     
-    iframe = 1
-    
-    for i in range(0, len(cubes)): 
+    for iframe, i in enumerate(range(0, len(cubes)), start=2): 
         min_idx = i  
-        
+
         for cube in cubes:
             cube.keyframe_insert(data_path="location", frame= iframe)
-        
+
         for j in range(i , len(cubes)):
-            
+
             #add 2 to array counter
             arrayCounter.inputs[0].default_value += 2
             arrayCounter.inputs[0].keyframe_insert(data_path='default_value', frame=iframe)
-            
+
             #add 1 to comparison counter
             comparisonCounter.inputs[0].default_value += 1
             comparisonCounter.inputs[0].keyframe_insert(data_path='default_value', frame=iframe)
-            
+
             if cubes[min_idx].scale.z > cubes[j].scale.z:   
                 min_idx = j
-        
+
         cubes[i].location.x = min_idx
         cubes[min_idx].location.x = i
-        
+
         cubes[i].keyframe_insert(data_path="location", frame= iframe)
         cubes[min_idx].keyframe_insert(data_path="location", frame= iframe)
-        iframe +=1
-        
         #add 4 to array counter
         arrayCounter.inputs[0].default_value += 4
         arrayCounter.inputs[0].keyframe_insert(data_path='default_value', frame=iframe)

@@ -10,51 +10,50 @@ from mathutils import Vector, Matrix
 def partition(array, low, high, arrayCounter, comparisonCounter):
     
     global iframe
-            
+
     #add 1 to array counter
     arrayCounter.inputs[0].default_value += 1
     arrayCounter.inputs[0].keyframe_insert(data_path='default_value', frame=iframe)
-   
+
     # choose the rightmost element as pivot
     pivot = array[(high + low) // 2]
-    
+
     # pointer for greater element
-    i = low 
+    i = low
     j = high
     while True:
 
         while array[i].scale.z < pivot.scale.z:
-            
+
             #add 1 to comparison counter
             comparisonCounter.inputs[0].default_value += 1
             comparisonCounter.inputs[0].keyframe_insert(data_path='default_value', frame=iframe)
             i += 1
-        
+
         while array[j].scale.z > pivot.scale.z:
-            
+
             #add 1 to comparison counter
             comparisonCounter.inputs[0].default_value += 1
             comparisonCounter.inputs[0].keyframe_insert(data_path='default_value', frame=iframe)
             j -= 1
-        
+
         if i >= j:
             return j
-        
-        else:
-            iframe += 1
-            for cube in cubes:
-                cube.keyframe_insert(data_path="location", frame=iframe)
-        
+
+        iframe += 1
+        for cube in cubes:
+            cube.keyframe_insert(data_path="location", frame=iframe)
+
         array[i].location.x = j
         array[j].location.x = i
-            
+
         array[i].keyframe_insert(data_path="location", frame=iframe)
         array[j].keyframe_insert(data_path="location", frame=iframe)
-            
+
         #add 4 to array counter
         arrayCounter.inputs[0].default_value += 4
         arrayCounter.inputs[0].keyframe_insert(data_path='default_value', frame=iframe)
-                
+
         # swapping element at i with element at j
         array[i], array[j] = array[j], array[i]
 

@@ -48,57 +48,56 @@ def selection_sort(arr, count, iframe):
 def partition(seed, array, low, high):
     
     global iframe
-    
+
     #choose the rightmost element as pivot
     pivot = array[(high + low) // 2]
-    
+
     #pointer for greater element
-    i = low 
+    i = low
     j = high
     while True:
 
         mat1 = array[i].active_material.diffuse_color
         mat2 = pivot.active_material.diffuse_color
-        
+
         #get RG values from materials
         rg1, rg2 = get_rg(mat1, mat2)
-        
+
         while rg1 < rg2:
             i += 1
             mat1 = array[i].active_material.diffuse_color
             mat2 = pivot.active_material.diffuse_color
-            
+
             #get RG values from materials
             rg1, rg2 = get_rg(mat1, mat2)
-        
+
         mat1 = array[j].active_material.diffuse_color
         mat2 = pivot.active_material.diffuse_color
-        
+
         #get RG values from materials
         rg1, rg2 = get_rg(mat1, mat2)
-        
+
         while rg1 > rg2:
             j -= 1
             mat1 = array[j].active_material.diffuse_color
             mat2 = pivot.active_material.diffuse_color
-            
+
             #get RG values from materials
             rg1, rg2 = get_rg(mat1, mat2)
-        
+
         if i >= j:
             return j
-        
-        else:
-            iframe += 1
-            for plane in Matrix4[seed]:
-                plane.keyframe_insert(data_path="location", frame=iframe)
-        
+
+        iframe += 1
+        for plane in Matrix4[seed]:
+            plane.keyframe_insert(data_path="location", frame=iframe)
+
         array[i].location.x = j * 2
         array[j].location.x = i * 2
-            
+
         array[i].keyframe_insert(data_path="location", frame=iframe)
         array[j].keyframe_insert(data_path="location", frame=iframe)
-                
+
         #swapping element at i with element at j
         array[i], array[j] = array[j], array[i]
 
@@ -336,11 +335,11 @@ def bubble_sort(arr, count, iframe):
 def shell_sort(arr, count, iframe):
     
     gap=count//2
-     
+
     while gap>0:
         
         j=gap
-        
+
         #check the array in from left to right
         #till the last possible index of j
         while j<count:
@@ -351,31 +350,29 @@ def shell_sort(arr, count, iframe):
                 
                 for cube in arr:
                     cube.keyframe_insert(data_path="location", frame= iframe)
-                
+
                 #if value on right side is already greater than left side value
                 #we don't do swap else we swap
                 mat1 = arr[i+gap].active_material.diffuse_color
                 mat2 = arr[i].active_material.diffuse_color
-                
+
                 #get RG values from materials
                 rg1, rg2 = get_rg(mat1, mat2)
-                
-                #compare RG values
+
                 if rg1 > rg2:
                     break
-                
-                else:
-                    arr[i+gap].location.x = i * 2
-                    arr[i].location.x = (i + gap) * 2
-                    
-                    arr[i+gap].keyframe_insert(data_path="location", frame= iframe)
-                    arr[i].keyframe_insert(data_path="location", frame= iframe)
-                    iframe += 1
-                    
-                    arr[i+gap],arr[i] = arr[i],arr[i+gap]
-                    
+
+                arr[i+gap].location.x = i * 2
+                arr[i].location.x = (i + gap) * 2
+
+                arr[i+gap].keyframe_insert(data_path="location", frame= iframe)
+                arr[i].keyframe_insert(data_path="location", frame= iframe)
+                iframe += 1
+
+                arr[i+gap],arr[i] = arr[i],arr[i+gap]
+
                 i=i-gap 
-                            
+
             j+=1
         gap=gap//2
     return iframe
@@ -386,20 +383,20 @@ def shell_sort(arr, count, iframe):
 
 def setup_array(count, variation):
 
-    print(str(variation)+ "/6 start setup_array") 
+    print(f"{str(variation)}/6 start setup_array") 
 
     #fill array with numbers between 0 & count - 1
     index = list(range(count))
 
     #initialize 2d array
-    Matrix = [[0 for x in range(count)] for y in range(count)] 
-    
+    Matrix = [[0 for _ in range(count)] for _ in range(count)] 
+
     #initialize plane array
-    planes = [0 for i in range(count*count)]
-    
+    planes = [0 for _ in range(count*count)]
+
     #initialize material array
-    materials = [0 for i in range(count)]
-    
+    materials = [0 for _ in range(count)]
+
     #transform every parent to create a cube made of planes
     offset = 0
     rotationX = 0
@@ -409,115 +406,105 @@ def setup_array(count, variation):
     moveZ = 0
     if variation == 1:
         offset = -0.1
-    if variation == 2:
+    elif variation == 2:
         offset = 0.1
         rotationX = 90
-    if variation == 3:
+    elif variation == 3:
         offset = 0.1
         moveY = count * -2
-    if variation == 4:
+    elif variation == 4:
         offset = -0.1
         rotationX = 90
         moveZ = count * 2
-    if variation == 5:
+    elif variation == 5:
         offset = 0.1
         rotationZ = -90
-    if variation == 6:
+    elif variation == 6:
         offset = -0.1
         rotationZ = -90
         moveX = count * 2  
-    
+
     #create arrays for each color value (RGB) to generate the sunset gradient
     #first half 0 --> 255, second half 255 --> 255
-    colors_r = [0 for i in range(count)]
+    colors_r = [0 for _ in range(count)]
     colors_r1 = np.linspace(0, 255, count//2)
     colors_r2 = np.linspace(255, 255, count//2)
     for i in range(count):  
-        if(i < count//2):
-            colors_r[i]=colors_r1[i]
-        else:
-            colors_r[i]=colors_r2[i-count//2]
-    
+        colors_r[i] = colors_r1[i] if (i < count//2) else colors_r2[i-count//2]
     #first half 0 --> 0, second half 0 --> 200
-    colors_g = [0 for i in range(count)]
+    colors_g = [0 for _ in range(count)]
     colors_g1 = np.linspace(0, 0, count//2)
     colors_g2 = np.linspace(1, 200, count//2)
     for i in range(count):  
-        if(i < count//2):
-            colors_g[i]=colors_g1[i]
-        else:
-            colors_g[i]=colors_g2[i-count//2]
-    
+        colors_g[i] = colors_g1[i] if (i < count//2) else colors_g2[i-count//2]
     #first half 200 --> 0, secondhalf 0 --> 100
-    colors_b = [0 for i in range(count)]
+    colors_b = [0 for _ in range(count)]
     colors_b1 = np.linspace(200, 0, count//2)
     colors_b2 = np.linspace(0, 100, count//2)
     for i in range(count):  
-        if(i < count//2):
-            colors_b[i]=colors_b1[i]
-        else:
-            colors_b[i]=colors_b2[i-count//2]
-    
+        colors_b[i] = colors_b1[i] if (i < count//2) else colors_b2[i-count//2]
     print("variables initialized and color arrays created")     
-   
+
     #creating count * count planes with location.x = j * 2 and location.z = i * 2
     for i in range(count):
         for j in range(count):
             bpy.ops.mesh.primitive_plane_add(location=(j*2, 0, i*2), rotation=(pi / 2, 0, 0), scale=(0.1, 0.1, 0.1)) 
             planes[j+i*count] = bpy.context.active_object
-    
+
     print("planes created and added to array") 
-    
+
     #create parent for pivot point
     bpy.ops.mesh.primitive_plane_add(location=(0, offset, 0), rotation=(pi / 2, 0, 0), scale=(0.1, 0.1, 0.1))
-    
+
     #name parent object to Parent
-    bpy.context.active_object.name = "Parent"+str(variation)
-    
+    bpy.context.active_object.name = f"Parent{str(variation)}"
+
     #set background material for merge sort
     materialParent = bpy.data.materials.new(name="Parent")
     materialParent.diffuse_color = (255, 0, 0, 255)
-    bpy.data.objects["Parent"+str(variation)].data.materials.append(materialParent)
-    
+    bpy.data.objects[f"Parent{str(variation)}"].data.materials.append(
+        materialParent
+    )
+
     #set cursor location
     bpy.context.scene.cursor.location = (-1, 0, -1)
-    
+
     #set origin to cursor
     bpy.ops.object.origin_set(type='ORIGIN_CURSOR', center='MEDIAN')
     bpy.ops.transform.resize(value=(count, 1, count))
-        
+
     #adding all planes to an array and parenting
     for plane in planes:
         #set parent and apply transform to avoid distortion
         bpy.ops.object.transform_apply(location=True, rotation=True, scale=True)
-        parent = bpy.data.objects["Parent"+str(variation)]
+        parent = bpy.data.objects[f"Parent{str(variation)}"]
         plane.parent = parent
-        
+
     print("added planes to parent")
-        
+
     #set origin to cursor again
     bpy.ops.object.origin_set(type='ORIGIN_CURSOR', center='MEDIAN')
-    
+
     #rotationX
     bpy.context.active_object.rotation_euler[0] = math.radians(rotationX)
-    
+
     #rotationZ
     bpy.context.active_object.rotation_euler[2] = math.radians(rotationZ)
-    
-    bpy.data.objects["Parent"+str(variation)].location = (moveX,moveY,moveZ)
+
+    bpy.data.objects[f"Parent{str(variation)}"].location = (moveX,moveY,moveZ)
 
     #sorts list of all objects based primary on their location.x and secondary on their location.z
     planes.sort(key = lambda obj: obj.location.z + obj.location.x/(count*count))
-    
-    #adding materials to array and set colorgradient 
+
+    #adding materials to array and set colorgradient
     for i in range(count):
-        for j in range(count):
-                material = bpy.data.materials.new(name="")
-                material.diffuse_color = (colors_r[i], colors_g[i], colors_b[i], 255)
-                materials[i] = material  
-    
+        for _ in range(count):
+            material = bpy.data.materials.new(name="")
+            material.diffuse_color = (colors_r[i], colors_g[i], colors_b[i], 255)
+            materials[i] = material  
+
     print("material array created")
-    
+
     #add materials to planes and planes to 2d array              
     for i in range(count):
         #randomize distribution of colors for every row
@@ -525,9 +512,9 @@ def setup_array(count, variation):
         for j in range(count):
                 planes[j+i*count].data.materials.append(materials[j]) #add the material to the object
                 Matrix[i][j] = planes[j+i*count]
-                
+
     print("appended materials to planes")
-     
+
     return(Matrix, count)
 
 ############################################################

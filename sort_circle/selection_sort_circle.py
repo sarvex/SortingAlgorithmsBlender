@@ -13,29 +13,25 @@ import colorsys
         
 def selection_sort(cubes):
     
-    iframe = 0
-    
-    for i in range(0, len(cubes)): 
+    for iframe, i in enumerate(range(0, len(cubes))): 
         min_idx = i  
-        
+
         for cube in cubes:
             cube.keyframe_insert(data_path="rotation_euler", frame= iframe)
-        
+
         for j in range(i , len(cubes)):
-            
+
             hsv1 = mat_to_hsv(cubes[min_idx])
             hsv2 = mat_to_hsv(cubes[j])
-            
+
             if hsv1 > hsv2:   
                 min_idx = j
-        
+
         cubes[i].rotation_euler.y = math.radians(min_idx*2)
         cubes[min_idx].rotation_euler.y = math.radians(i*2)
-        
+
         cubes[i].keyframe_insert(data_path="rotation_euler", frame= iframe)
         cubes[min_idx].keyframe_insert(data_path="rotation_euler", frame= iframe)
-        iframe +=1
-        
         cubes[i], cubes[min_idx] = cubes[min_idx], cubes[i]
 
 ###########################################################
@@ -46,19 +42,17 @@ def mat_to_hsv(ob):
 
     #get materials
     mat = ob.active_material.diffuse_color
-      
+
     #get R value 
     r = mat[0]
-    
+
     #get G value 
     g = mat[1]
-    
+
     #get b value
     b = mat[2]
 
-    hsv = colorsys.rgb_to_hsv(r, g, b)
-    
-    return hsv
+    return colorsys.rgb_to_hsv(r, g, b)
 
 ###########################################################
 # #Set origin of cube to bottom of mesh
@@ -85,25 +79,25 @@ def setup_array(count):
     bpy.context.scene.view_settings.gamma = 0.5
     bpy.context.scene.view_settings.look = 'Medium Contrast'
     bpy.context.scene.view_settings.view_transform = 'Standard'
-    
+
     #fill array with numbers between 0 & count - 1
     index = list(range(count))
 
     #initialize plane array
-    planes = [0 for i in range(count)]
+    planes = [0 for _ in range(count)]
 
     #initialize material array
-    materials = [0 for i in range(count)]
+    materials = [0 for _ in range(count)]
 
     #create all r values for hsv circle
-    colors_r = [0 for i in range(count)]
+    colors_r = [0 for _ in range(count)]
     colors_r1 = np.linspace(0, 255, count//6)
     colors_r2 = np.linspace(255, 255, count//6)
     colors_r3 = np.linspace(255, 255, count//6)
     colors_r4 = np.linspace(255, 0, count//6)
     colors_r5 = np.linspace(0, 0, count//6)
     colors_r6 = np.linspace(0, 0, count//6)
-    
+
     for i in range(count):  
         if(i < count//6):
             colors_r[i]=colors_r1[i]
@@ -119,7 +113,7 @@ def setup_array(count):
             colors_r[i]=colors_r6[i-count//6 * 5]
 
     #create all g values for hsv circle
-    colors_g = [0 for i in range(count)]
+    colors_g = [0 for _ in range(count)]
     colors_g1 = np.linspace(0, 0, count//6)
     colors_g2 = np.linspace(0, 0, count//6)
     colors_g3 = np.linspace(0, 255, count//6)
@@ -141,7 +135,7 @@ def setup_array(count):
             colors_g[i]=colors_g6[i-count//6 * 5]
 
     #create all b values for hsv circle
-    colors_b = [0 for i in range(count)]
+    colors_b = [0 for _ in range(count)]
     colors_b1 = np.linspace(255, 255, count//6)
     colors_b2 = np.linspace(255, 0, count//6)
     colors_b3 = np.linspace(0, 0, count//6)
@@ -174,34 +168,30 @@ def setup_array(count):
     for i in range(count):
         bpy.ops.mesh.primitive_cube_add(location=(0, -i/count, 0), rotation=(0, 0, 0), scale=(1, 1, 1)) 
 
-    #adding all planes to an array
-    i=0
-    for ob in bpy.data.objects:
-       planes[i]= ob
-       origin_to_bottom(ob)
-       ob.scale = (0.04525, 0.1, 1.25)
-       ob.rotation_euler = (0, math.radians(i*2), 0)
-       i+=1
-
+    for i, ob in enumerate(bpy.data.objects):
+        planes[i]= ob
+        origin_to_bottom(ob)
+        ob.scale = (0.04525, 0.1, 1.25)
+        ob.rotation_euler = (0, math.radians(i*2), 0)
     #adding materials to array and set colorgradient 
     for i in range(count):
         material = bpy.data.materials.new(name="")
         material.diffuse_color = (colors_r[i], colors_g[i], colors_b[i], 255)
         materials[i] = material  
-    
+
     random.shuffle(index)
     #add materials to planes and planes to 2d array              
     for i in range(count):
         #randomize distribution of colors for every row
         planes[i].rotation_euler.y = math.radians(index[i]*2)
         planes[i].data.materials.append(materials[i]) #add the material to the object
-    
+
     #sorts list of all objects based primary on their location.x and secondary on their location.z
     planes.sort(key = lambda obj: obj.rotation_euler.y)
-    
+
     #add cone to cover up overlapping center planes
     bpy.ops.mesh.primitive_cone_add(location=(0, -1, -1), rotation=(math.radians(-90),0,0), scale =(2,2,1)) 
-    
+
     return(planes, count)
 
 ############################################################

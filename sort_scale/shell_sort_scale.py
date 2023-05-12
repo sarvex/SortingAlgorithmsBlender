@@ -9,13 +9,13 @@ from mathutils import Vector, Matrix
 def shellSort(arr, n, arrayCounter, comparisonCounter):
     
     global iframe
-    
+
     gap=n//2
-     
+
     while gap>0:
         
         j=gap
-        
+
         # Check the array in from left to right
         # Till the last possible index of j
         while j<n:
@@ -25,36 +25,32 @@ def shellSort(arr, n, arrayCounter, comparisonCounter):
                 
                 for cube in arr:
                     cube.keyframe_insert(data_path="location", frame= iframe)
-                
+
                 #add 1 to comparison counter
                 comparisonCounter.inputs[0].default_value += 1
                 comparisonCounter.inputs[0].keyframe_insert(data_path='default_value', frame=iframe)
-            
+
                 #add 2 to array counter
                 arrayCounter.inputs[0].default_value += 2
                 arrayCounter.inputs[0].keyframe_insert(data_path='default_value', frame=iframe)
-                
-                # If value on right side is already greater than left side value
-                # We don't do swap else we swap
+
                 if arr[i+gap].scale.z > arr[i].scale.z:
- 
                     break
-                else:
-                    arr[i+gap].location.x = i
-                    arr[i].location.x = i + gap
-                    
-                    arr[i+gap].keyframe_insert(data_path="location", frame= iframe)
-                    arr[i].keyframe_insert(data_path="location", frame= iframe)
-                    iframe += 1
-                    
-                    arr[i+gap],arr[i] = arr[i],arr[i+gap]
-                    
-                    #add 4 to array counter
-                    arrayCounter.inputs[0].default_value += 4
-                    arrayCounter.inputs[0].keyframe_insert(data_path='default_value', frame=iframe)
- 
+                arr[i+gap].location.x = i
+                arr[i].location.x = i + gap
+
+                arr[i+gap].keyframe_insert(data_path="location", frame= iframe)
+                arr[i].keyframe_insert(data_path="location", frame= iframe)
+                iframe += 1
+
+                arr[i+gap],arr[i] = arr[i],arr[i+gap]
+
+                #add 4 to array counter
+                arrayCounter.inputs[0].default_value += 4
+                arrayCounter.inputs[0].keyframe_insert(data_path='default_value', frame=iframe)
+
                 i=i-gap # To check left side also
-                            # If the element present is greater than current element
+                                        # If the element present is greater than current element
             j+=1
         gap=gap//2
 
